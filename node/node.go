@@ -1017,6 +1017,18 @@ func NewNodeWithContext(ctx context.Context,
 		stateSyncReactor, consensusReactor, evidenceReactor, nodeInfo, nodeKey, p2pLogger,
 	)
 
+	//add custom reactor
+	ppReactor, _ := p2p.NewPPeactor()
+	ppReactor.SetLogger(p2pLogger.With("custom", "pp"))
+	sw.AddReactor("PP", &ppReactor)
+
+	for _, chDesc := range ppReactor.GetChannels() {
+		if !nodeInfo.HasChannel(chDesc.ID) {
+			nodeInfo.Channels = append(nodeInfo.Channels, chDesc.ID)
+			transport.AddChannel(chDesc.ID)
+		}
+	}
+
 	err = sw.AddPersistentPeers(splitAndTrimEmpty(config.P2P.PersistentPeers, ",", " "))
 	if err != nil {
 		return nil, fmt.Errorf("could not add peers from persistent_peers field: %w", err)

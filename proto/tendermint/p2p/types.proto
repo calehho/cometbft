@@ -32,3 +32,15 @@ message DefaultNodeInfoOther {
   string tx_index    = 1;
   string rpc_address = 2 [(gogoproto.customname) = "RPCAddress"];
 }
+
+message PP {
+  string from_id = 1;
+  uint64 ping_at = 2;
+  uint64 pong_at = 3;
+}
+
+message PPMessage {
+  oneof sum {
+    PP pp = 1;
+  }
+}
